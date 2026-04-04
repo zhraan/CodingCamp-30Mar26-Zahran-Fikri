@@ -8,7 +8,7 @@ Aplikasi web mobile-friendly untuk melacak pengeluaran harian. Menampilkan total
 
 ## Fitur
 
-**Wajib (MVP)
+**Wajib (MVP)**
 
 - Form input transaksi — nama item, jumlah (Rp), kategori
 - Daftar transaksi scrollable dengan tombol hapus
