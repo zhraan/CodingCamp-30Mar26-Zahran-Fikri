@@ -2,7 +2,7 @@
 
 Aplikasi web mobile-friendly untuk melacak pengeluaran harian. Menampilkan total saldo, riwayat transaksi, dan grafik distribusi pengeluaran per kategori — semua tersimpan di browser tanpa backend.
 
-**Demo:** [GitHub Pages](https://zahranfikri.github.io/CodingCamp-30Mar26-Zahran-Fikri/)
+**Demo:** [GitHub Pages](https://zahranfikri.github.io/CodingCamp-30Mar26-Zahran-Fikri/) 
 
 ---
 

@@ -234,39 +234,30 @@ class TransactionManager {
 // Manages Chart.js integration for the spending pie chart.
 class ChartManager {
 
-  /**
-   * @param {HTMLCanvasElement} canvasElement - The canvas element to render the chart on
-   */
   constructor(canvasElement) {
     this.canvas = canvasElement;
     this.chart = null;
+    this.legendEl = document.getElementById('chart-legend');
+    // Track which dataset indices are hidden
+    this._hidden = new Set();
   }
 
-  /**
-   * Initialize the Chart.js pie chart instance.
-   * Creates a responsive pie chart with a 200ms animation duration.
-   * If Chart.js is unavailable, logs a warning and shows a fallback message.
-   */
   initialize() {
     if (!window.Chart) {
       console.warn('ChartManager: Chart.js is not available.');
-      // Show fallback message in place of the canvas
       if (this.canvas && this.canvas.parentElement) {
         const fallback = document.createElement('p');
         fallback.id = 'chart-fallback';
-        fallback.textContent = 'Chart visualization unavailable. Category totals will not be displayed.';
+        fallback.textContent = 'Chart visualization unavailable.';
         fallback.style.textAlign = 'center';
-        fallback.style.color = '#666';
         this.canvas.parentElement.replaceChild(fallback, this.canvas);
       }
       return;
     }
 
-    // Destroy any existing chart before creating a new one
-    if (this.chart) {
-      this.chart.destroy();
-      this.chart = null;
-    }
+    if (this.chart) { this.chart.destroy(); this.chart = null; }
+
+    const isDark = () => document.body.classList.contains('theme-dark');
 
     this.chart = new Chart(this.canvas, {
       type: 'pie',
@@ -275,64 +266,129 @@ class ChartManager {
         datasets: [{
           data: [],
           backgroundColor: ChartManager.COLORS,
-          borderWidth: 1,
+          borderColor: '#ffffff',
+          borderWidth: 3,
+          hoverBorderWidth: 4,
+          hoverOffset: 8,
         }]
       },
       options: {
         responsive: true,
-        animation: {
-          duration: 200
-        },
+        animation: { duration: 300 },
         plugins: {
-          legend: {
-            display: true,
-            position: 'bottom',
+          legend: { display: false }, // disabled — using custom HTML legend
+          tooltip: {
+            callbacks: {
+              label(ctx) {
+                const fmt = (v) => new Intl.NumberFormat('id-ID', {
+                  style: 'currency', currency: 'IDR',
+                  minimumFractionDigits: 0, maximumFractionDigits: 0
+                }).format(v);
+                const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                const pct = total > 0 ? ((ctx.parsed / total) * 100).toFixed(1) : '0.0';
+                return ` ${fmt(ctx.parsed)}  (${pct}%)`;
+              }
+            }
           }
         }
       }
     });
   }
 
-  /**
-   * Update the chart with new category spending data.
-   * @param {Map<string, number>} categoryDataMap - Map of category name → total amount
-   */
+  /** Render the custom HTML legend grid below the chart. */
+  _renderLegend(labels, data, colors) {
+    if (!this.legendEl) return;
+    const fmt = (v) => new Intl.NumberFormat('id-ID', {
+      style: 'currency', currency: 'IDR',
+      minimumFractionDigits: 0, maximumFractionDigits: 0
+    }).format(v);
+    const total = data.reduce((a, b) => a + b, 0);
+
+    this.legendEl.innerHTML = '';
+
+    labels.forEach((label, i) => {
+      const pct = total > 0 ? ((data[i] / total) * 100).toFixed(1) : '0.0';
+      const isHidden = this._hidden.has(i);
+
+      const item = document.createElement('button');
+      item.type = 'button';
+      item.className = 'chart-legend__item' + (isHidden ? ' chart-legend__item--disabled' : '');
+      item.setAttribute('role', 'listitem');
+      item.setAttribute('aria-pressed', isHidden ? 'true' : 'false');
+      item.setAttribute('aria-label', `${isHidden ? 'Tampilkan' : 'Sembunyikan'} ${label}`);
+      item.dataset.index = i;
+
+      item.innerHTML = `
+        <span class="chart-legend__swatch" style="background:${colors[i]};"></span>
+        <span class="chart-legend__name">${label}</span>
+        <span class="chart-legend__pct">${pct}%</span>
+        <span class="chart-legend__val">${fmt(data[i])}</span>
+      `;
+
+      item.addEventListener('click', () => {
+        const idx = parseInt(item.dataset.index);
+        const meta = this.chart.getDatasetMeta(0);
+        if (this._hidden.has(idx)) {
+          this._hidden.delete(idx);
+          meta.data[idx].hidden = false;
+        } else {
+          this._hidden.add(idx);
+          meta.data[idx].hidden = true;
+        }
+        this.chart.update();
+        // Re-render legend to reflect new state
+        this._renderLegend(
+          this.chart.data.labels,
+          this.chart.data.datasets[0].data,
+          this.chart.data.datasets[0].backgroundColor
+        );
+      });
+
+      this.legendEl.appendChild(item);
+    });
+  }
+
   update(categoryDataMap) {
     if (!this.chart) return;
 
-    // Handle empty data with a placeholder state
     if (!categoryDataMap || categoryDataMap.size === 0) {
       this.chart.data.labels = ['No transactions'];
       this.chart.data.datasets[0].data = [1];
-      this.chart.data.datasets[0].backgroundColor = ['#E7E9ED'];
+      this.chart.data.datasets[0].backgroundColor = ['#cbd5e1'];
+      this.chart.data.datasets[0].borderColor = '#ffffff';
       this.chart.update();
+      if (this.legendEl) this.legendEl.innerHTML = '';
       return;
     }
 
     const labels = [];
     const data = [];
-
     for (const [category, total] of categoryDataMap) {
       labels.push(category);
       data.push(total);
     }
 
+    const colors = labels.map((_, i) => ChartManager.COLORS[i % ChartManager.COLORS.length]);
+    const isDark = document.body.classList.contains('theme-dark');
+
     this.chart.data.labels = labels;
     this.chart.data.datasets[0].data = data;
-    // Assign colors cycling through the palette
-    this.chart.data.datasets[0].backgroundColor = labels.map(
-      (_, i) => ChartManager.COLORS[i % ChartManager.COLORS.length]
-    );
+    this.chart.data.datasets[0].backgroundColor = colors;
+    this.chart.data.datasets[0].borderColor = isDark ? '#1e293b' : '#ffffff';
+    this.chart.data.datasets[0].borderWidth = 3;
+
+    // Sync tooltip colors
+    this.chart.options.plugins.tooltip.backgroundColor = isDark ? '#1e293b' : '#ffffff';
+    this.chart.options.plugins.tooltip.titleColor      = isDark ? '#f1f5f9' : '#1e293b';
+    this.chart.options.plugins.tooltip.bodyColor       = isDark ? '#94a3b8' : '#374151';
+    this.chart.options.plugins.tooltip.borderColor     = isDark ? '#475569' : '#e2e8f0';
+    this.chart.options.plugins.tooltip.borderWidth     = 1;
 
     this.chart.update();
+    this._renderLegend(labels, data, colors);
   }
 
-  /**
-   * Destroy the current chart instance and recreate it fresh.
-   */
-  reset() {
-    this.initialize();
-  }
+  reset() { this.initialize(); }
 }
 
 // Predefined color palette for categories.
@@ -917,6 +973,7 @@ function initApp() {
     themeToggleBtn.addEventListener('click', () => {
       themeManager.toggle();
       if (themeIcon) themeIcon.textContent = themeManager.getCurrent() === 'dark' ? '☀️' : '🌙';
+      uiManager.updateChart();
     });
   }
 

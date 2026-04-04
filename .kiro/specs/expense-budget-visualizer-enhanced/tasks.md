@@ -62,7 +62,7 @@ Implementasi dilakukan secara bottom-up: CSS → HTML → kelas-kelas baru di JS
     - Jika tidak valid: kembalikan `{ success: false, error: '...' }` sesuai pesan error di design
     - _Persyaratan: 3.1, 3.2, 3.5_
 
-  - [~] 3.4 Tulis property test untuk `CategoryManager.addCategory` (Properti 5)
+  - [ ] 3.4 Tulis property test untuk `CategoryManager.addCategory` (Properti 5)
     - **Properti 5: Validasi Nama Kategori Kustom**
     - **Memvalidasi: Persyaratan 3.5**
     - Gunakan `fast-check`: generate nama kosong, whitespace, dan duplikat — semua harus mengembalikan `{ success: false }`
@@ -73,7 +73,7 @@ Implementasi dilakukan secara bottom-up: CSS → HTML → kelas-kelas baru di JS
     - Kembalikan `{ success: boolean, error?: string }`
     - _Persyaratan: 3.1_
 
-  - [~] 3.6 Tulis property test untuk round-trip kategori kustom (Properti 3)
+  - [ ] 3.6 Tulis property test untuk round-trip kategori kustom (Properti 3)
     - **Properti 3: Round-Trip Kategori Kustom**
     - **Memvalidasi: Persyaratan 3.2, 3.6**
     - Generate array nama kategori valid, simpan dan muat kembali — hasil harus identik
@@ -90,27 +90,27 @@ Implementasi dilakukan secara bottom-up: CSS → HTML → kelas-kelas baru di JS
     - `getCurrent()`: kembalikan `this.current`
     - _Persyaratan: 7.2, 7.3, 7.4_
 
-  - [~] 4.3 Tulis property test untuk round-trip preferensi tema (Properti 11)
+  - [ ] 4.3 Tulis property test untuk round-trip preferensi tema (Properti 11)
     - **Properti 11: Round-Trip Preferensi Tema**
     - **Memvalidasi: Persyaratan 7.3, 7.4**
     - Generate nilai `'dark'` atau `'light'`, simpan dan muat kembali — tema yang diterapkan harus identik
 
-- [~] 5. Checkpoint — Pastikan semua kelas baru berfungsi secara mandiri
+- [ ] 5. Checkpoint — Pastikan semua kelas baru berfungsi secara mandiri
   - Pastikan semua tes unit dan property test untuk `CategoryManager` dan `ThemeManager` lulus, tanyakan kepada pengguna jika ada pertanyaan.
 
-- [~] 6. Extend `TransactionManager` — tambah metode baru di `js/app.js`
+- [ ] 6. Extend `TransactionManager` — tambah metode baru di `js/app.js`
   - [x] 6.1 Implementasi metode `getSortedTransactions(sortBy, order)`
     - Buat salinan array dengan `[...this.transactions]` (tidak mengubah array asli)
     - Implementasi sorting: `'date'` berdasarkan `timestamp`, `'amount'` berdasarkan `amount`, `'category'` secara alfabetis
     - Default: `sortBy = 'date'`, `order = 'desc'`
     - _Persyaratan: 5.1, 5.2, 5.4, 5.5_
 
-  - [~] 6.2 Tulis property test untuk pengurutan ascending/descending (Properti 7)
+  - [ ] 6.2 Tulis property test untuk pengurutan ascending/descending (Properti 7)
     - **Properti 7: Pengurutan Ascending dan Descending Adalah Kebalikan**
     - **Memvalidasi: Persyaratan 5.4**
     - Generate array transaksi acak, verifikasi `asc` adalah kebalikan dari `desc`
 
-  - [~] 6.3 Tulis property test untuk urutan default terbaru di atas (Properti 8)
+  - [ ] 6.3 Tulis property test untuk urutan default terbaru di atas (Properti 8)
     - **Properti 8: Urutan Default adalah Terbaru di Atas**
     - **Memvalidasi: Persyaratan 5.5**
     - Generate transaksi dengan timestamp berbeda, verifikasi elemen pertama memiliki timestamp terbesar
@@ -121,17 +121,17 @@ Implementasi dilakukan secara bottom-up: CSS → HTML → kelas-kelas baru di JS
     - Kembalikan `Map` yang diurutkan dari terbaru ke terlama
     - _Persyaratan: 4.2, 4.3_
 
-  - [~] 6.5 Tulis property test untuk pengelompokan bulanan (Properti 6)
+  - [ ] 6.5 Tulis property test untuk pengelompokan bulanan (Properti 6)
     - **Properti 6: Pengelompokan Bulanan Akurat**
     - **Memvalidasi: Persyaratan 4.2, 4.3**
     - Generate transaksi dengan timestamp acak, verifikasi total dan count per bulan akurat
 
-- [~] 7. Update `UIManager` — tambah metode baru di `js/app.js`
+- [ ] 7. Update `UIManager` — tambah metode baru di `js/app.js`
   - [x] 7.1 Implementasi metode `formatRupiah(amount)`
     - Gunakan `new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(amount)`
     - _Persyaratan: 2.1_
 
-  - [~] 7.2 Tulis property test untuk format Rupiah (Properti 1)
+  - [ ] 7.2 Tulis property test untuk format Rupiah (Properti 1)
     - **Properti 1: Format Rupiah Konsisten**
     - **Memvalidasi: Persyaratan 2.1, 2.3**
     - Generate integer positif, verifikasi output dimulai dengan "Rp" dan menggunakan titik sebagai pemisah ribuan
@@ -167,15 +167,15 @@ Implementasi dilakukan secara bottom-up: CSS → HTML → kelas-kelas baru di JS
     - Tampilkan/sembunyikan `#spending-limit-warning`
     - _Persyaratan: 6.2, 6.4, 6.5_
 
-  - [~] 7.9 Tulis property test untuk logika peringatan batas pengeluaran (Properti 9)
+  - [ ] 7.9 Tulis property test untuk logika peringatan batas pengeluaran (Properti 9)
     - **Properti 9: Peringatan Batas Pengeluaran**
     - **Memvalidasi: Persyaratan 6.2, 6.4, 6.5**
     - Generate kombinasi saldo dan batas, verifikasi status peringatan sesuai kondisi `balance > limit`
 
-- [~] 8. Checkpoint — Pastikan semua metode UIManager baru berfungsi
+- [ ] 8. Checkpoint — Pastikan semua metode UIManager baru berfungsi
   - Pastikan semua tes untuk metode UIManager baru lulus, tanyakan kepada pengguna jika ada pertanyaan.
 
-- [~] 9. Update `initApp()` — integrasi semua manager baru dan event handlers
+- [ ] 9. Update `initApp()` — integrasi semua manager baru dan event handlers
   - [x] 9.1 Inisialisasi `CategoryManager` dan `ThemeManager` di awal `initApp()`
     - Buat instance `StorageManager` terpisah untuk `'customCategories'`, `'spendingLimit'`, dan `'theme'`
     - Inisialisasi `categoryManager.load()` dan `themeManager.load()`
@@ -223,12 +223,12 @@ Implementasi dilakukan secara bottom-up: CSS → HTML → kelas-kelas baru di JS
     - Setelah `deleteTransaction` berhasil: tambah panggilan `uiManager.updateSpendingLimit()` dan `uiManager.renderMonthlySummary(currentMonthKey)`
     - _Persyaratan: 6.2, 4.2_
 
-  - [~] 9.10 Tulis property test untuk round-trip batas pengeluaran (Properti 10)
+  - [ ] 9.10 Tulis property test untuk round-trip batas pengeluaran (Properti 10)
     - **Properti 10: Round-Trip Batas Pengeluaran**
     - **Memvalidasi: Persyaratan 6.3, 6.6**
     - Generate nilai batas pengeluaran valid, simpan dan muat kembali — nilai harus identik
 
-- [~] 10. Checkpoint akhir — Verifikasi integrasi menyeluruh
+- [ ] 10. Checkpoint akhir — Verifikasi integrasi menyeluruh
   - Pastikan semua tes lulus dan semua fitur terintegrasi dengan benar, tanyakan kepada pengguna jika ada pertanyaan.
 
 ## Catatan
