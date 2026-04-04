@@ -119,13 +119,18 @@
 
       <!-- Sort Controls -->
       <div class="sort-controls" id="sort-controls">
-        <label for="sort-by">Urutkan:</label>
-        <select id="sort-by">
-          <option value="date">Terbaru</option>
-          <option value="amount">Jumlah</option>
-          <option value="category">Kategori</option>
-        </select>
-        <button id="sort-order-btn" class="btn btn--icon" aria-label="Toggle urutan">↑↓</button>
+        <span class="sort-controls__label">Urutkan:</span>
+        <div id="sort-dropdown" class="sort-dropdown" tabindex="0"
+             aria-haspopup="listbox" aria-expanded="false" aria-label="Pilih urutan">
+          <span id="sort-display" class="sort-dropdown__display">Terbaru</span>
+          <span class="sort-dropdown__arrow" aria-hidden="true">▾</span>
+        </div>
+        <div id="sort-panel" class="sort-panel" role="listbox" hidden>
+          <button type="button" class="sort-option" data-value="date" aria-selected="true">Terbaru</button>
+          <button type="button" class="sort-option" data-value="amount" aria-selected="false">Jumlah</button>
+          <button type="button" class="sort-option" data-value="category" aria-selected="false">Kategori</button>
+        </div>
+        <button id="sort-order-btn" class="btn btn--icon sort-order-btn" aria-label="Toggle urutan">↓</button>
       </div>
 
       <ul id="transaction-list" class="transaction-list" aria-label="List of transactions">

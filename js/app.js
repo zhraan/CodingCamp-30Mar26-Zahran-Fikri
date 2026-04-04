@@ -1048,25 +1048,57 @@ function initApp() {
     });
   }
 
-  // Sort controls
-  const sortBySelect = document.getElementById('sort-by');
-  const sortOrderBtn = document.getElementById('sort-order-btn');
+  // Sort controls — custom dropdown
+  const sortDropdown  = document.getElementById('sort-dropdown');
+  const sortPanel     = document.getElementById('sort-panel');
+  const sortDisplay   = document.getElementById('sort-display');
+  const sortOrderBtn  = document.getElementById('sort-order-btn');
+  const sortOptions   = sortPanel ? sortPanel.querySelectorAll('.sort-option') : [];
 
-  if (sortBySelect) {
-    sortBySelect.addEventListener('change', () => {
-      currentSortBy = sortBySelect.value;
-      const sorted = transactionManager.getSortedTransactions(currentSortBy, currentSortOrder);
-      uiManager.renderTransactionList(sorted);
+  function closeSortPanel() {
+    if (sortPanel) sortPanel.hidden = true;
+    if (sortDropdown) sortDropdown.setAttribute('aria-expanded', 'false');
+  }
+
+  if (sortDropdown) {
+    sortDropdown.addEventListener('click', () => {
+      const isOpen = !sortPanel.hidden;
+      if (isOpen) { closeSortPanel(); } else {
+        sortPanel.hidden = false;
+        sortDropdown.setAttribute('aria-expanded', 'true');
+      }
+    });
+    sortDropdown.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); sortDropdown.click(); }
+      if (e.key === 'Escape') closeSortPanel();
     });
   }
+
+  sortOptions.forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentSortBy = btn.dataset.value;
+      sortDisplay.textContent = btn.textContent;
+      sortOptions.forEach(b => b.setAttribute('aria-selected', 'false'));
+      btn.setAttribute('aria-selected', 'true');
+      closeSortPanel();
+      uiManager.renderTransactionList(transactionManager.getSortedTransactions(currentSortBy, currentSortOrder));
+    });
+  });
+
   if (sortOrderBtn) {
     sortOrderBtn.addEventListener('click', () => {
       currentSortOrder = currentSortOrder === 'desc' ? 'asc' : 'desc';
       sortOrderBtn.textContent = currentSortOrder === 'asc' ? '↑' : '↓';
-      const sorted = transactionManager.getSortedTransactions(currentSortBy, currentSortOrder);
-      uiManager.renderTransactionList(sorted);
+      uiManager.renderTransactionList(transactionManager.getSortedTransactions(currentSortBy, currentSortOrder));
     });
   }
+
+  // Close sort panel when clicking outside
+  document.addEventListener('click', (e) => {
+    if (sortDropdown && !sortDropdown.closest('.sort-controls').contains(e.target)) {
+      closeSortPanel();
+    }
+  });
 
   // Monthly navigation
   const prevMonthBtn = document.getElementById('prev-month-btn');
